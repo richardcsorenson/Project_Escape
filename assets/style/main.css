@@ -1,0 +1,11 @@
+.areaMap{
+    width: 44rem;
+    height: 40rem;
+    background-color: green;
+}
+.activityInfo{
+    width: 22rem;
+    height: 40rem;
+    background-color: forestgreen;
+    margin: -.6rem;
+}
