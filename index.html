@@ -5,9 +5,9 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Escape</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://code.jquery.com/jquery.js"></script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" media="screen" href="assets/style/main.css" />
-    <script src="main.js"></script>
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-light navbar-fixed-top">
@@ -28,6 +28,9 @@
                     <li>
                     <a class="nav-link" href="about.html">About Us</a>
                     </li>
+                    <li>
+                        <a class="nav-link">Login</a>
+                    </li>
                 </ul>
             </div>
             <!-- /.navbar-collapse -->
@@ -42,11 +45,10 @@
         <div class = "row">
             <div class = "col-md-8">
                 <div class = "row">
-                    <input type="text" value="Enter a city">
-                    <button>Go</button>
+                    <input type="text" value="Enter a city (City, ST)" class = "searchingCity">
+                    <button id = "going">Go</button>
                 </div>
                 <div class = "areaMap">
-                    ta-da
                 </div>
             </div>
             <div class = "col-md-4">
@@ -56,14 +58,12 @@
                 </div>
                 
                 <div class = "row">
-                    <div class = "activityInfo">
-                        Checklist will go here
-                    </div>
+                    <div id = "buttonBox" ></div>
                 </div>
             </div>
         </div>
     </div>    
 
-    
+    <script src="assets/javascript/logic.js"></script>    
 </body>
 </html>

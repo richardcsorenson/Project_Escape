@@ -1,11 +1,15 @@
 .areaMap{
-    width: 44rem;
-    height: 40rem;
-    background-color: green;
+
 }
 .activityInfo{
-    width: 22rem;
-    height: 40rem;
-    background-color: forestgreen;
     margin: -.6rem;
+}
+#buttonBox{
+    margin-left:10px;
+    width:90%;
+    margin: 10px auto 10px auto;
+
+}
+#npButton{
+    margin:10px 10px 0px 0px;
 }
