@@ -31,6 +31,28 @@ form{
 
 #buttonBox{
     margin-left:10px;
+    width:90%;
+    margin: 10px auto 10px auto;
+
 }
+
+table{
+    margin: 10px auto 50px auto;
+    width:90%;
+    height:500px;
+}
+
+#colOne{
+    border: 2px solid black;
+    width: 66%;
+    height: auto;
+}
+
+#colTwo{
+    border: 2px solid black;
+    width:33%;
+    height: auto;
+}
+
 
 
