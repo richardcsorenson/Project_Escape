@@ -31,9 +31,7 @@ $(document).ready(function() {
         queryURL = "https://developer.nps.gov/api/v1/parks?&limit=496&api_key=sc8zC5tqF4V2Qu2btmhXRepIwuZBKzoN1Wu23a5z";
         var parksArray = [];
         var index = 0;
-        var closestFirst;
-        var closestSecond;
-        var closestThird;
+        var closest = [];
         
         $.ajax({
             url: queryURL,
@@ -75,8 +73,7 @@ $(document).ready(function() {
                     index = i;
                 }
             }
-            closestFirst = parksArray[index];
-            console.log(closestFirst);
+            closest[0] = parksArray[index];
             parksArray.splice(index, 1);
             index = 0;
             temp = parksArray[0][3];
@@ -86,8 +83,7 @@ $(document).ready(function() {
                 index = j;
                 }
             }
-            closestSecond = parksArray[index];
-            console.log(closestSecond);
+            closest[1] = parksArray[index];
             parksArray.splice(index, 1);
             index = 0;
             temp = parksArray[0][3];
@@ -97,12 +93,9 @@ $(document).ready(function() {
                 index = k;
                 }
             }
-            closestThird = parksArray[index];
-            console.log(closestThird);
+            closest[2] = parksArray[index];
         };
         function makeButtons(){
-
-            var npArr = [closestFirst[1] + " " + closestFirst[2], closestSecond[1] + " " + closestSecond[2], closestThird[1] + " " + closestThird[2]];
         
             // var apiKey = "200285437-63e8df6ae924026feee1c05737ea2d62"
             // var queryURL = "";
@@ -122,11 +115,14 @@ $(document).ready(function() {
             // }
             function newButton(){
             
-                for(i=0;i<npArr.length;i++){
+                for(i=0;i<closest.length;i++){
         
                     var newButton = $("<button>");
                     newButton.attr("id", "npButton");
-                    newButton.text(npArr[i]);
+                    newButton.text(closest[i][1] + closest[i][2]);
+                    newButton.attr("data-lat", closest[i][4]);
+                    newButton.attr("data-lng", closest[i][5]);
+                    newButton.attr("prkCode", closest[i][0])
                     $("#buttonBox").append(newButton);
         
                 }
