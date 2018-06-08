@@ -5,10 +5,24 @@ $(document).ready(function() {
     var geocodeArray;
     var lat;
     var lng;
+    var parksArray = [];
+    var index = 0;
+    var closest = [];
     $("#going").on("click", function(){
         $("#buttonBox").empty();
         $(".areaMap").empty();
         var geocode = $(".searchingCity").val().trim();
+        var re = /(([A-Z]{1})[A-Za-z]+(?: [A-Za-z]+)*[,]),? ([A-Z]{2})/;
+        var OK = re.exec(geocode);  
+        if (!OK) {
+            inputCorrection();
+        }
+        else {
+            citySearch(geocode);
+        }
+    });
+
+        function citySearch(geocode) {
         var geocodeArray = geocode.split(",");
         var queryURL = "https://www.mapquestapi.com/geocoding/v1/address?key=" + "bx4GNHAnYTNfXXmUFGyUv4wjDPfomZIq" + "&inFormat=kvp&outFormat=json&location=" + geocodeArray[0] + "%2C+" + geocodeArray[1] + "&thumbMaps=false";
         $.ajax({
@@ -22,6 +36,8 @@ $(document).ready(function() {
             console.log(lng);
             newValues = true;
         });
+    
+  
         var mapQueryURL = "https://www.mapquestapi.com/staticmap/v5/map?key=bx4GNHAnYTNfXXmUFGyUv4wjDPfomZIq&center=" + geocodeArray[0] + ", " + geocodeArray[1] + "&size=300,300@2x";
         newImg = $("<img>");
         newImg.attr("src", mapQueryURL);
@@ -29,9 +45,7 @@ $(document).ready(function() {
         $(".areaMap").append(newImg);
 
         queryURL = "https://developer.nps.gov/api/v1/parks?&limit=496&api_key=sc8zC5tqF4V2Qu2btmhXRepIwuZBKzoN1Wu23a5z";
-        var parksArray = [];
-        var index = 0;
-        var closest = [];
+    
         
         $.ajax({
             url: queryURL,
@@ -39,8 +53,14 @@ $(document).ready(function() {
         }).then(function(response) {
             createDistance(response);
             closestThree();
-            makeButtons();
+            newButton();
         });
+    }
+
+
+    function inputCorrection() {
+        console.log("Please enter the city in the correct format.")
+    }
         
         //This function calculates distance from user's city to the National Park coordinates. Some parks do not have
         //coordinates and we can deal with those edge cases later if we have time.  The parksArray holds information
@@ -95,7 +115,7 @@ $(document).ready(function() {
             }
             closest[2] = parksArray[index];
         };
-        function makeButtons(){
+        // function makeButtons(){
         
             // var apiKey = "200285437-63e8df6ae924026feee1c05737ea2d62"
             // var queryURL = "";
@@ -118,33 +138,88 @@ $(document).ready(function() {
                 for(i=0;i<closest.length;i++){
         
                     var newButton = $("<button>");
-                    newButton.attr("id", "npButton");
-                    newButton.text(closest[i][1] + closest[i][2]);
+                    newButton.addClass("npButton");
+                    newButton.text(closest[i][1] + " " + closest[i][2]);
                     newButton.attr("data-lat", closest[i][4]);
                     newButton.attr("data-lng", closest[i][5]);
                     newButton.attr("prkCode", closest[i][0])
                     $("#buttonBox").append(newButton);
         
                 }
+            }     
+  
+    function campingButtons(campingArray) {
+        $("#campInfo").empty();
+        $("#activityButtons").empty();
+        if (campingArray.data.length > 0) {
+            if (campingArray.data.length < 5) {
+                for (i=0; i<campingArray.data.length; i++) {
+                    var thisCampDiv = $("<div>");
+                    var campButton = $("<button>");
+                    var addButton = $("<button>");
+                    campButton.addClass("camping");
+                    campButton.attr("description", campingArray.data[i].description);
+                    campButton.text(campingArray.data[i].name);
+                    addButton.text("Add");
+                    addButton.attr({"name": campingArray.data[i].name, "url": campingArray.data[i].regulationsUrl});
+                    addButton.addClass("store");
+                    thisCampDiv.append(campButton, addButton);
+                    $("#activityButtons").append(thisCampDiv);
+                }
             }
+            else {
+                for (i=0; i<5; i++) {
+                    var thisCampDiv = $("<div>");
+                    var campButton = $("<button>");
+                    var addButton = $("<button>");
+                    campButton.addClass("camping");
+                    campButton.attr("description", campingArray.data[i].description);
+                    campButton.text(campingArray.data[i].name);
+                    addButton.text("Add");
+                    addButton.attr({"name": campingArray.data[i].name, "url": campingArray.data[i].regulationsUrl});
+                    addButton.addClass("store");
+                    thisCampDiv.append(campButton, addButton);
+                    $("#activityButtons").append(thisCampDiv);
+                }
+            }
+        }
+        else {
+            var noCamps = $("<p>");
+            noCamps.text("Sorry, there are no campgrounds at this national park.");
+            $("#campInfo").append(noCamps);
+        }
+    }
         
-            $("#searchBtn").on("click", function(event){
-                event.preventDefault();
-        
-                var value = ("#userInput").val().trim();
-        
-            });
-        
-            // $(documemt).on("click", "#npButton", mapInfo)
-            newButton();
-        };
-    });
+    $(document).on('click', '.npButton', function() {
+        var parkCode = ($(this).attr("prkCode"));
+        queryURL = "https://developer.nps.gov/api/v1/campgrounds?parkCode=" + parkCode + "&api_key=sc8zC5tqF4V2Qu2btmhXRepIwuZBKzoN1Wu23a5z";
+        console.log(queryURL);
+        $.ajax({
+         url: queryURL,
+         method: "GET"
+         }).then(function(response) {
+                campingButtons(response);
+         });
+     });
 
+     $(document).on('click', '.camping', function() {
+         $("#campInfo").empty();
+         var description = ($(this).attr("description"));
+         var p = $("<p>");
+         p.text(description);
+         $("#campInfo").append(p);
+     })
 
+     $(document).on('click', '.store', function() {
+        localStorage.clear();
+        var name = ($(this).attr("name"));
+        var url = ($(this).attr("url"));
+        localStorage.setItem("name", name);
+        localStorage.setItem("url", url);
+        console.log(localStorage.getItem("name"));
+        console.log(localStorage.getItem("url"));
 
-        //Sort through parks data array, retrieve lattitude and longitude, compare them to user's city,
-        // and find three closest, pull out name of park and park code and save to a variable.
-    
-        
+    })
+
 });
 
