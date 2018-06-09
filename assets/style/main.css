@@ -43,4 +43,7 @@ body{
     position: absolute;
     margin-top: 8px;
 }
+#hikeBtn:hover{
+    cursor: pointer;
+}
 
