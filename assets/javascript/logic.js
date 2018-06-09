@@ -47,11 +47,6 @@ $(document).ready(function() {
             console.log(lng);
             newValues = true;
         });
-        var mapQueryURL = "https://www.mapquestapi.com/staticmap/v5/map?key=bx4GNHAnYTNfXXmUFGyUv4wjDPfomZIq&center=" + geocodeArray[0] + ", " + geocodeArray[1] + "&size=300,300@2x";
-        newImg = $("<img>");
-        newImg.attr("src", mapQueryURL);
-        $(".areaMap").empty();
-        $(".areaMap").append(newImg);
 
         queryURL = "https://developer.nps.gov/api/v1/parks?&limit=496&api_key=sc8zC5tqF4V2Qu2btmhXRepIwuZBKzoN1Wu23a5z";
         var parksArray = [];
@@ -119,6 +114,11 @@ $(document).ready(function() {
                 }
             }
             closest[2] = parksArray[index];
+            var mapQueryURL = "https://www.mapquestapi.com/staticmap/v5/map?key=bx4GNHAnYTNfXXmUFGyUv4wjDPfomZIq&locations=" + geocodeArray[0] + ", " + geocodeArray[1] + "||" + closest[0][4] + "," + closest[0][5] + "|marker-md-1||" + closest[1][4] + "," + closest[1][5] + "|marker-md-2||" + closest[2][4] + "," + closest[2][5] + "|marker-md-3&size=300,300@2x";
+            newImg = $("<img>");
+            newImg.attr("src", mapQueryURL);
+            $(".areaMap").empty();
+            $(".areaMap").append(newImg);
         };
         function makeButtons(){
 
@@ -129,7 +129,7 @@ $(document).ready(function() {
                     var newButton = $("<button>");
                     newButton.attr("id", "npButton");
                     newButton.addClass("destination");
-                    newButton.text(closest[i][1] + " " + closest[i][2]);
+                    newButton.text((i+1) + "-" + closest[i][1] + " " + closest[i][2]);
                     newButton.attr("data-lat", closest[i][4]);
                     newButton.attr("data-lng", closest[i][5]);
                     newButton.attr("prkCode", closest[i][0])
@@ -164,7 +164,7 @@ $(document).ready(function() {
 
     });
     function getFoodAddress(foodLat, foodLng) {
-        var queryURL = " https://www.mapquestapi.com/search/v2/radius?origin=shapePoints=" + foodLat + "," + foodLng + "&radius=20.0&maxMatches=3&ambiguities=ignore&hostedData=mqap.ntpois|group_sic_code=?|581208&outFormat=json&key=bx4GNHAnYTNfXXmUFGyUv4wjDPfomZIq"
+        var queryURL = "https://www.mapquestapi.com/search/v2/radius?origin=" + foodLat + ",+" + foodLng + "&radius=20.00&maxMatches=3&ambiguities=ignore&hostedData=mqap.ntpois|group_sic_code=?|581208&outFormat=json&key=bx4GNHAnYTNfXXmUFGyUv4wjDPfomZIq"
         $.ajax({
             url: queryURL,
             method: "GET"
@@ -175,6 +175,16 @@ $(document).ready(function() {
                 restST = $("<p>");
                 restPhone = $("<p>");
                 restName = $("<p>");
+                restAddress1 = $("<p>");
+                restCity1 = $("<p>");
+                restST1 = $("<p>");
+                restPhone1 = $("<p>");
+                restName1 = $("<p>");
+                restAddress2 = $("<p>");
+                restCity2 = $("<p>");
+                restST2 = $("<p>");
+                restPhone2 = $("<p>");
+                restName2 = $("<p>");
                 restAddress.text(response.searchResults[0].fields.address);
                 restCity.text(response.searchResults[0].fields.city);
                 restName.text(response.searchResults[0].fields.name);
@@ -185,6 +195,26 @@ $(document).ready(function() {
                 $("#campInfo").append(restName);
                 $("#campInfo").append(restPhone);
                 $("#campInfo").append(restST);
+                restAddress1.text(response.searchResults[1].fields.address);
+                restCity1.text(response.searchResults[1].fields.city);
+                restName1.text(response.searchResults[1].fields.name);
+                restPhone1.text(response.searchResults[1].fields.phone);
+                restST1.text(response.searchResults[1].fields.state);
+                $("#campInfo").append(restAddress1);
+                $("#campInfo").append(restCity1);
+                $("#campInfo").append(restName1);
+                $("#campInfo").append(restPhone1);
+                $("#campInfo").append(restST1);
+                restAddress2.text(response.searchResults[2].fields.address);
+                restCity2.text(response.searchResults[2].fields.city);
+                restName2.text(response.searchResults[2].fields.name);
+                restPhone2.text(response.searchResults[2].fields.phone);
+                restST2.text(response.searchResults[2].fields.state);
+                $("#campInfo").append(restAddress2);
+                $("#campInfo").append(restCity2);
+                $("#campInfo").append(restName2);
+                $("#campInfo").append(restPhone2);
+                $("#campInfo").append(restST2);
             });
     };
     
