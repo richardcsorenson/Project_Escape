@@ -1,6 +1,4 @@
-.areaMap{
 
-}
 .activityInfo{
     margin: -.6rem;
 }
@@ -12,4 +10,23 @@
 }
 #npButton{
     margin:10px 10px 0px 0px;
+}
+.modal {
+    display: none; 
+    position: fixed; 
+    z-index: 1; 
+    left: 0;
+    top: 0;
+    width: 100%; 
+    height: 100%; 
+    overflow: auto; 
+}
+.modal-content {
+    background-color: tan;
+    margin: 12% auto; 
+    padding: 20px;
+    text-align: center;
+    border: 4px solid black;
+    font-size: 18px;
+    width: 20%; 
 }
