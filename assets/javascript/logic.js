@@ -5,6 +5,31 @@ $(document).ready(function() {
     var geocodeArray;
     var lat;
     var lng;
+    var main = $("body");
+    btns = main.find("#buttonBox");
+    $(document).on("click", "#npButton", function(){
+        console.log("You clicked me");
+        
+        $("#buttonBox").empty();
+        var newButton = $("<button>");
+        newButton.attr("data-lat", $(this).attr("data-lat"));
+        newButton.text("Hiking");
+        newButton.attr("data-lng", $(this).attr("data-lng"));
+        newButton.addClass("hiking");
+        $("#buttonBox").append(newButton);
+        var newButton2 = $("<button>");
+        newButton2.text("Food");
+        newButton2.attr("data-lat", $(this).attr("data-lat"));
+        newButton2.attr("data-lng", $(this).attr("data-lng"));
+        newButton2.addClass("food");
+        $("#buttonBox").append(newButton2);
+        var newBtn = $("<button>");
+        newBtn.attr("prkCode", $(this).attr("prkCode"));
+        newBtn.addClass("camping");
+        newBtn.text("Camping");
+        $("#buttonBox").append(newBtn);
+    });
+
     $("#going").on("click", function(){
         $("#buttonBox").empty();
         $(".areaMap").empty();
@@ -96,30 +121,15 @@ $(document).ready(function() {
             closest[2] = parksArray[index];
         };
         function makeButtons(){
-        
-            // var apiKey = "200285437-63e8df6ae924026feee1c05737ea2d62"
-            // var queryURL = "";
-        
-            // function mapInfo(){
-        
-            //     $.ajax({
-            //         url:queryURL,
-            //         method: "GET"
-            //     }).then(function(response){
-        
-            //         mapData = response.data;
-        
-        
-            //     });
-        
-            // }
+
             function newButton(){
             
                 for(i=0;i<closest.length;i++){
         
                     var newButton = $("<button>");
                     newButton.attr("id", "npButton");
-                    newButton.text(closest[i][1] + closest[i][2]);
+                    newButton.addClass("destination");
+                    newButton.text(closest[i][1] + " " + closest[i][2]);
                     newButton.attr("data-lat", closest[i][4]);
                     newButton.attr("data-lng", closest[i][5]);
                     newButton.attr("prkCode", closest[i][0])
@@ -127,15 +137,6 @@ $(document).ready(function() {
         
                 }
             }
-        
-            $("#searchBtn").on("click", function(event){
-                event.preventDefault();
-        
-                var value = ("#userInput").val().trim();
-        
-            });
-        
-            // $(documemt).on("click", "#npButton", mapInfo)
             newButton();
         };
     });
@@ -145,6 +146,116 @@ $(document).ready(function() {
         //Sort through parks data array, retrieve lattitude and longitude, compare them to user's city,
         // and find three closest, pull out name of park and park code and save to a variable.
     
-        
+    $(document).on('click', '.camping', function() {
+        var parkCode = ($(this).attr("prkCode"));
+        queryURL = "https://developer.nps.gov/api/v1/campgrounds?parkCode=" + parkCode + "&api_key=sc8zC5tqF4V2Qu2btmhXRepIwuZBKzoN1Wu23a5z";
+        console.log(queryURL);
+        $.ajax({
+            url: queryURL,
+            method: "GET"
+            }).then(function(response) {
+                console.log(response);
+                campingButtons(response);
+        });
+    });
+    $(document).on('click', '.food', function() {
+        console.log("You clicked me");
+        getFoodAddress($(this).attr("data-lat"), $(this).attr("data-lng"));
+
+    });
+    function getFoodAddress(foodLat, foodLng) {
+        var queryURL = " https://www.mapquestapi.com/search/v2/radius?origin=shapePoints=" + foodLat + "," + foodLng + "&radius=20.0&maxMatches=3&ambiguities=ignore&hostedData=mqap.ntpois|group_sic_code=?|581208&outFormat=json&key=bx4GNHAnYTNfXXmUFGyUv4wjDPfomZIq"
+        $.ajax({
+            url: queryURL,
+            method: "GET"
+            }).then(function(response) {
+                var restAddress, restCity, restST, restPhone, restName;
+                restAddress = $("<p>");
+                restCity = $("<p>");
+                restST = $("<p>");
+                restPhone = $("<p>");
+                restName = $("<p>");
+                restAddress.text(response.searchResults[0].fields.address);
+                restCity.text(response.searchResults[0].fields.city);
+                restName.text(response.searchResults[0].fields.name);
+                restPhone.text(response.searchResults[0].fields.phone);
+                restST.text(response.searchResults[0].fields.state);
+                $("#campInfo").append(restAddress);
+                $("#campInfo").append(restCity);
+                $("#campInfo").append(restName);
+                $("#campInfo").append(restPhone);
+                $("#campInfo").append(restST);
+            });
+    };
+    
+    
+    function campingButtons(campingArray) {
+        $("#campInfo").empty();
+        $("#activityButtons").empty();
+        if (campingArray.data.length > 0) {
+            if (campingArray.data.length < 5) {
+                for (i=0; i<campingArray.data.length; i++) {
+                    var thisCampDiv = $("<div>");
+                    var campButton = $("<button>");
+                    var addButton = $("<button>");
+                    campButton.addClass("campingSite");
+                    campButton.attr("description", campingArray.data[i].description);
+                    campButton.text(campingArray.data[i].name);
+                    addButton.text("Add");
+                    addButton.attr({"name": campingArray.data[i].name, "url": campingArray.data[i].regulationsUrl});
+                    addButton.addClass("store");
+                    thisCampDiv.append(campButton, addButton);
+                    $("#activityButtons").append(thisCampDiv);
+                }
+            }
+            else {
+                for (i=0; i<5; i++) {
+                    var thisCampDiv = $("<div>");
+                    var campButton = $("<button>");
+                    var addButton = $("<button>");
+                    campButton.addClass("campingSite");
+                    campButton.attr("description", campingArray.data[i].description);
+                    campButton.text(campingArray.data[i].name);
+                    addButton.text("Add");
+                    addButton.attr({"name": campingArray.data[i].name, "url": campingArray.data[i].regulationsUrl});
+                    addButton.addClass("store");
+                    thisCampDiv.append(campButton, addButton);
+                    $("#activityButtons").append(thisCampDiv);
+                }
+            }
+        }
+        else {
+            var noCamps = $("<p>");
+            noCamps.text("Sorry, there are no campgrounds at this national park.");
+            $("#campInfo").append(noCamps);
+        }
+    };
+    
+    
+    $(document).on('click', '.campingSite', function() {
+        $("#campInfo").empty();
+        var description = ($(this).attr("description"));
+        var p = $("<p>");
+        p.text(description);
+        $("#campInfo").append(p);
+    })
+
+    $(document).on('click', '.store', function() {
+       localStorage.clear();
+       var name = ($(this).attr("name"));
+       var url = ($(this).attr("url"));
+       localStorage.setItem("name", name);
+       localStorage.setItem("url", url);
+       console.log(localStorage.getItem("name"));
+       console.log(localStorage.getItem("url"));
+
+   });
+   
+    function inputCorrection() {
+        var modal = $('#myModal');
+        $("#correction").text("Please enter the city in the correct format.")
+        modal.css("display", "block");
+        setTimeout(function(){ modal.css("display", "none"); }, 5000);
+    };
 });
 
