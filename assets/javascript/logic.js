@@ -261,4 +261,107 @@ $(document).ready(function() {
         modal.css("display", "block");
         setTimeout(function(){ modal.css("display", "none"); }, 5000);
     };
+
+    $(document).on('click', '.store', function() {
+        localStorage.clear();
+        var name = ($(this).attr("name"));
+        var contact = ($(this).attr("contact"));
+        tripArr = [];
+        
+        tripArr.push(name);
+        tripArr.push(contact);
+        localStorage.setItem("array", tripArr);
+        var data = localStorage.getItem("array")   
+        console.log(tripArr)  
+        
+        for (var i= 0; i < tripArr.length; i++) {
+            var s = $("<ul>");
+            var item = tripArr[i].toString(" ");
+            console.log(item);
+            s.text(item);
+            var remover = $("<button>");
+            remover.addClass("delete");
+            remover.text("delete");
+            remover.prepend(s);
+            $('#currentTrip').append(s);
+        }
+
+    });
+
+    $(document).on("click", '.hiking', function(){
+        $("#campInfo").empty();
+        var trLat = $(this).attr("data-lat");
+        var trLng = $(this).attr("data-lng");
+
+        console.log("you clicked: " + trLat);
+
+        var apiKeyTrails = "200285437-63e8df6ae924026feee1c05737ea2d62"
+        var queryTrailURL = "https://www.hikingproject.com/data/get-trails?lat="+ trLat + "&lon="+ trLng + "&maxDistance=10&key=" + apiKeyTrails;
+
+        console.log(queryTrailURL);
+
+        function mapInfo(){
+            
+            $.ajax({
+               url:queryTrailURL,
+                method: "GET"
+            }).then(function(response){
+
+               var mapData = response.trails;
+
+               for(i=0;i<mapData.length;i++){
+
+                   if(mapData[i].stars == 5){
+
+                        var hikeInfo = $("<div>");
+                        hikeInfo.text(mapData[i].name);
+
+                        hikeInfo.attr({
+                            "url":mapData[i].url,
+                            "name":mapData[i].name,
+                            "location":mapData[i].location, 
+                            "length":mapData[i].length, 
+                            "status":mapData[i].conditionStatus,
+                            "ascent":mapData[i].ascent});
+
+                        hikeInfo.attr("id", "hikeBtn");
+                        $("#campInfo").append(hikeInfo);
+                   }   
+
+                  /* var location = $(this).text(mapData[i].location);
+                   var length = $(this).text(mapData[i].length);
+                   var status = $(this).text(mapData[i].conditionStatus);
+                   var ascent = $(this).text(mapData[i].ascent);*/
+                   
+               }
+
+               $(document).on("click", "#hikeBtn", function(event){
+                $("#campInfo").empty();
+                console.log("clicked");
+                var location = $(this).attr("location");
+                var length = $(this).attr("length");
+                var status = $(this).attr("status");
+                var ascent = $(this).attr("ascent");
+
+
+                $("#campInfo").append("Location: " + location + "<br>");
+                $("#campInfo").append("Length: " + length + " miles<br>");
+                $("#campInfo").append("Weather: " + status + "<br>");
+                $("#campInfo").append("Ascent: " + ascent + " feet<br>");
+                var newBtn = $("<button>");
+                newBtn.attr("name", $(this).attr("name"));
+                newBtn.attr("contact", $(this).attr("url"));
+                newBtn.text("Save");
+                newBtn.addClass("store");
+                $("#campInfo").append(newBtn);
+
+               });
+               console.log(response);
+   
+            });
+
+        }
+
+        mapInfo();
+    });
 });
