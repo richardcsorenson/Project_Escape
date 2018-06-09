@@ -30,3 +30,45 @@
     font-size: 18px;
     width: 20%; 
 }
+body{
+    background-color:rgba(102, 92, 60, 0.63);
+}
+
+.activityInfo{
+    margin: -.6rem;
+}
+#buttonBox{
+    margin-left:10px;
+    width:90%;
+    margin: 10px auto 10px auto;
+
+}
+#npButton{
+    margin:10px 10px 0px 0px;
+}
+
+#navBox{
+    width:100%;
+    height:75px;
+    background-color: rgba(62, 92, 33, 0);
+    
+}
+
+#logo{
+    color:white;
+    font-size:32px;
+    font-weight:bolder;
+}
+
+
+#page-nav-collapse{
+    color:white;
+}
+
+#headerBox{
+    width:100%;
+    height:75px;
+    background-color: rgba(62, 92, 33, 0.705);
+    position: absolute;
+    margin-top: 8px;
+}
