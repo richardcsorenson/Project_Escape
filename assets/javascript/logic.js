@@ -59,8 +59,11 @@ $(document).ready(function() {
 
 
     function inputCorrection() {
-        console.log("Please enter the city in the correct format.")
-    }
+        var modal = $('#myModal');
+        $("#correction").text("Please enter the city in the correct format.")
+        modal.css("display", "block");
+        setTimeout(function(){ modal.css("display", "none"); }, 3000);
+     }
         
         //This function calculates distance from user's city to the National Park coordinates. Some parks do not have
         //coordinates and we can deal with those edge cases later if we have time.  The parksArray holds information
@@ -115,24 +118,7 @@ $(document).ready(function() {
             }
             closest[2] = parksArray[index];
         };
-        // function makeButtons(){
-        
-            // var apiKey = "200285437-63e8df6ae924026feee1c05737ea2d62"
-            // var queryURL = "";
-        
-            // function mapInfo(){
-        
-            //     $.ajax({
-            //         url:queryURL,
-            //         method: "GET"
-            //     }).then(function(response){
-        
-            //         mapData = response.data;
-        
-        
-            //     });
-        
-            // }
+
             function newButton(){
             
                 for(i=0;i<closest.length;i++){
@@ -161,7 +147,7 @@ $(document).ready(function() {
                     campButton.attr("description", campingArray.data[i].description);
                     campButton.text(campingArray.data[i].name);
                     addButton.text("Add");
-                    addButton.attr({"name": campingArray.data[i].name, "url": campingArray.data[i].regulationsUrl});
+                    addButton.attr({"name": campingArray.data[i].name, "contact": campingArray.data[i].regulationsUrl});
                     addButton.addClass("store");
                     thisCampDiv.append(campButton, addButton);
                     $("#activityButtons").append(thisCampDiv);
@@ -176,7 +162,7 @@ $(document).ready(function() {
                     campButton.attr("description", campingArray.data[i].description);
                     campButton.text(campingArray.data[i].name);
                     addButton.text("Add");
-                    addButton.attr({"name": campingArray.data[i].name, "url": campingArray.data[i].regulationsUrl});
+                    addButton.attr({"name": campingArray.data[i].name, "contact": campingArray.data[i].regulationsUrl});
                     addButton.addClass("store");
                     thisCampDiv.append(campButton, addButton);
                     $("#activityButtons").append(thisCampDiv);
@@ -213,11 +199,26 @@ $(document).ready(function() {
      $(document).on('click', '.store', function() {
         localStorage.clear();
         var name = ($(this).attr("name"));
-        var url = ($(this).attr("url"));
-        localStorage.setItem("name", name);
-        localStorage.setItem("url", url);
-        console.log(localStorage.getItem("name"));
-        console.log(localStorage.getItem("url"));
+        var contact = ($(this).attr("contact"));
+        tripArr = [];
+        
+        tripArr.push(name);
+        tripArr.push(contact);
+        localStorage.setItem("array", tripArr);
+        var data = localStorage.getItem("array")   
+        console.log(tripArr)  
+        
+        for (var i= 0; i < tripArr.length; i++) {
+            var s = $("<ul>");
+            var item = tripArr[i].toString(" ");
+            console.log(item);
+            s.text(item)
+            var del = $("<button>");
+            del.addClass("delete");
+            del.text("delete");
+            del.prepend(s);
+            $('#currentTrip').append(s);
+        }
 
     })
 

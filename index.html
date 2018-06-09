@@ -19,18 +19,8 @@
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="page-nav-collapse">
                 <ul class="nav navbar-nav ml-auto">
-                    <li>
-                    <a class="nav-link" href="contact.html">Current Trip Items</a>
-                    </li>
-                    <li>
-                    <a class="nav-link" href="portfolio.html">Previous Trip Log</a>
-                    </li>
-                    <li>
-                    <a class="nav-link" href="about.html">About Us</a>
-                    </li>
-                    <li>
-                        <a class="nav-link">Login</a>
-                    </li>
+                    <!-- <li>Current Trip Items</li> -->
+                    <div id="currentTrip">Curent Trip Items</div>
                 </ul>
             </div>
             <!-- /.navbar-collapse -->
@@ -44,13 +34,17 @@
     <div class = "container">
         <div class = "row">
             <div class = "col-md-8">
-                <div class = "row">
-                    <input type="text" placeholder="Enter a city (City, ST)" class = "searchingCity">
+
+                <input type="text" placeholder="Enter a city (City, ST)" class = "searchingCity">
                     <button id = "going">Go</button>
-                </div>
                 <div class = "areaMap">
                 </div>
             </div>
+            <div id="myModal" class="modal">
+                    <div class="modal-content">
+                        <h4 id="correction"></h4>
+                    </div>
+                </div> 
             <div class = "col-md-4">
                 <div class="row">
                     <p id = "currentActivity">Activity: </p>
