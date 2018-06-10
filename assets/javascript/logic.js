@@ -5,6 +5,8 @@ $(document).ready(function() {
     var geocodeArray;
     var lat;
     var lng;
+    var tripActivities = 0;
+    tripArr = [];
     
     $(document).on("click", "#npButton", function(){   
         $("#buttonBox").empty();
@@ -36,8 +38,8 @@ $(document).ready(function() {
         //empty any info from previous searches
         $("#buttonBox").empty();
         $(".areaMap").empty();
-        $(".activityButtons").empty();
-        $(".campInfo").empty();
+        $("#activityButtons").empty();
+        $("#campInfo").empty();
         //grab search parameters and check to see if they follow requeried formating
         var geocode = $(".searchingCity").val().trim();
         var re = /(([A-Z]{1})[A-Za-z]+(?: [A-Za-z]+)*[,]),? ([A-Z]{2})/;
@@ -168,6 +170,8 @@ $(document).ready(function() {
 
     });
     function getFoodAddress(foodLat, foodLng) {
+        $("#campInfo").empty();
+        $("#activityButtons").empty();
         var queryURL = "https://www.mapquestapi.com/search/v2/radius?origin=" + foodLat + ",+" + foodLng + "&radius=20.00&maxMatches=3&ambiguities=ignore&hostedData=mqap.ntpois|group_sic_code=?|581208&outFormat=json&key=bx4GNHAnYTNfXXmUFGyUv4wjDPfomZIq"
         $.ajax({
             url: queryURL,
@@ -246,50 +250,57 @@ $(document).ready(function() {
         $("#campInfo").append(p);
     });
 
-    $(document).on('click', '.store', function() {
-       localStorage.clear();
-       var name = ($(this).attr("name"));
-       var url = ($(this).attr("url"));
-       localStorage.setItem("name", name);
-       localStorage.setItem("url", url);
-   });
-
    //creates modal if user input doesn't match correct format
     function inputCorrection() {
         var modal = $('#myModal');
         $("#correction").text("Please enter the city in the correct format.")
         modal.css("display", "block");
-        setTimeout(function(){ modal.css("display", "none"); }, 5000);
+        setTimeout(function(){ modal.css("display", "none"); }, 3000);
     };
 
     $(document).on('click', '.store', function() {
-        localStorage.clear();
         var name = ($(this).attr("name"));
         var contact = ($(this).attr("contact"));
-        tripArr = [];
-        
-        tripArr.push(name);
-        tripArr.push(contact);
-        localStorage.setItem("array", tripArr);
-        var data = localStorage.getItem("array")   
-        console.log(tripArr)  
-        
-        for (var i= 0; i < tripArr.length; i++) {
-            var s = $("<ul>");
-            var item = tripArr[i].toString(" ");
+        nameContact = [];
+        nameContact.push(name, contact);    
+        tripArr.push(nameContact);
+        localStorage.setItem("array", JSON.stringify(tripArr));
+        displayActivities();
+    });
+
+    function displayActivities() {
+        $("#currentTrip").empty();
+        var data = JSON.parse(localStorage.getItem("array"));        
+        for (var i= 0; i < data.length; i++) {
+            var s = $("<div>");
+            s.attr("id", "item-" + tripActivities);
+            var item = data[i][0].toString() + " " + data[i][1].toString();
             console.log(item);
             s.text(item);
             var remover = $("<button>");
             remover.addClass("delete");
-            remover.text("delete");
-            remover.prepend(s);
+            remover.attr("data-num", tripActivities);
+            remover.attr("value", i);
+            remover.text("✘");
+            s.prepend(remover);
             $('#currentTrip').append(s);
+            tripActivities++;
         }
+    }
 
+    $(document).on("click", '.delete', function(){
+        var activityNumber = $(this).attr("data-num");
+        var index = $(this).attr("value");
+        tripArr.splice(index, 1);
+        $("#item-" + activityNumber).remove();
+        console.log(tripArr);
+        localStorage.setItem("array", JSON.stringify(tripArr));
+        displayActivities();
     });
 
     $(document).on("click", '.hiking', function(){
         $("#campInfo").empty();
+        $("#activityButtons").empty();
         var trLat = $(this).attr("data-lat");
         var trLng = $(this).attr("data-lng");
 
@@ -326,42 +337,32 @@ $(document).ready(function() {
 
                         hikeInfo.attr("id", "hikeBtn");
                         $("#campInfo").append(hikeInfo);
-                   }   
-
-                  /* var location = $(this).text(mapData[i].location);
-                   var length = $(this).text(mapData[i].length);
-                   var status = $(this).text(mapData[i].conditionStatus);
-                   var ascent = $(this).text(mapData[i].ascent);*/
-                   
+                   }                     
                }
-
-               $(document).on("click", "#hikeBtn", function(event){
-                $("#campInfo").empty();
-                console.log("clicked");
-                var location = $(this).attr("location");
-                var length = $(this).attr("length");
-                var status = $(this).attr("status");
-                var ascent = $(this).attr("ascent");
-
-
-                $("#campInfo").append("Location: " + location + "<br>");
-                $("#campInfo").append("Length: " + length + " miles<br>");
-                $("#campInfo").append("Weather: " + status + "<br>");
-                $("#campInfo").append("Ascent: " + ascent + " feet<br>");
-                var newBtn = $("<button>");
-                newBtn.attr("name", $(this).attr("name"));
-                newBtn.attr("contact", $(this).attr("url"));
-                newBtn.text("Save");
-                newBtn.addClass("store");
-                $("#campInfo").append(newBtn);
-
-               });
                console.log(response);
-   
             });
-
         }
-
         mapInfo();
     });
+    
+    $(document).on("click", "#hikeBtn", function(event){
+        $("#campInfo").empty();
+        console.log("clicked");
+        var location = $(this).attr("location");
+        var length = $(this).attr("length");
+        var status = $(this).attr("status");
+        var ascent = $(this).attr("ascent");
+
+        $("#campInfo").append("Location: " + location + "<br>");
+        $("#campInfo").append("Length: " + length + " miles<br>");
+        $("#campInfo").append("Weather: " + status + "<br>");
+        $("#campInfo").append("Ascent: " + ascent + " feet<br>");
+        var newBtn = $("<button>");
+        newBtn.attr("name", $(this).attr("name"));
+        newBtn.attr("contact", $(this).attr("url"));
+        newBtn.text("Save");
+        newBtn.addClass("store");
+        $("#campInfo").append(newBtn);
+    });
+
 });
