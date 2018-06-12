@@ -11,7 +11,7 @@ $(document).ready(function() {
         var modal = $('#myModal');
         $("#correction").text("Please enter the city in the correct format.")
         modal.css("display", "block");
-        setTimeout(function(){ modal.css("display", "none"); }, 5000);
+        setTimeout(function(){ modal.css("display", "none"); }, 3000);
     };
     //function to start the search and create 3 buttons relating to the 3 closest national parks
     $("#going").on("click", function(){
@@ -218,8 +218,10 @@ $(document).ready(function() {
         addButton.text("Add");
         addButton.attr({"name": info.data[i].name, "contact": info.data[i].regulationsUrl});
         addButton.addClass("store");
-        thisCampDiv.append(campButton, addButton);
+        thisCampDiv.append(campButton);
+        // thisCampDiv.append(addButton);
         $("#activityButtons").append(thisCampDiv);
+        $("#activityButtons").append(addButton);
     };
 
     //create buttons for campgrounds nearby
