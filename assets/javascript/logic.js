@@ -187,22 +187,49 @@ $(document).ready(function() {
             }).then(function(response) {
                 $("#activityButtons").empty();
                 var restAddress = [], restCity = [], restST = [], restPhone = [], restName = [];
-                for (var i = 0; i < 3; i++){
-                    restAddress[i] = response.searchResults[i].fields.address;
-                    restCity[i] = response.searchResults[i].fields.city;
-                    restName[i] = response.searchResults[i].fields.name;
-                    restPhone[i] = response.searchResults[i].fields.phone;
-                    restST[i] = response.searchResults[i].fields.state;
+                if(response.resultsCount == 0){
+                    $("#activityButtons").text("Sorry, there are no resturants within a 20 mile radius");
                 }
-                for (var i = 0; i < 3; i++){
-                    var newP = $("<p>");
-                    newP.text(restName[i] + " " + restAddress[i] + " " + restCity[i] + " " + restPhone[i]);
-                    $("#activityButtons").append(newP);
-                    var addButton = $("<button>");
-                    addButton.text("Add");
-                    addButton.attr({"name": restName[i], "contact": restPhone[i]});
-                    addButton.addClass("store");
-                    $("#activityButtons").append(addButton);
+                else{
+                    var restAddress = [], restCity = [], restST = [], restPhone = [], restName = [];
+                    if(response.resultsCount < 3){
+                        for (var i = 0; i < response.resultsCount; i++){
+                            restAddress[i] = response.searchResults[i].fields.address;
+                            restCity[i] = response.searchResults[i].fields.city;
+                            restName[i] = response.searchResults[i].fields.name;
+                            restPhone[i] = response.searchResults[i].fields.phone;
+                            restST[i] = response.searchResults[i].fields.state;
+                        }
+                        for (var i = 0; i < response.resultsCount; i++){
+                            var newP = $("<p>");
+                            newP.text(restName[i] + " " + restAddress[i] + " " + restCity[i] + " " + restPhone[i]);
+                            $("#activityButtons").append(newP);
+                            var addButton = $("<div>");
+                            addButton.text("Add");
+                            addButton.attr({"name": restName[i], "contact": restPhone[i]});
+                            addButton.addClass("store");
+                            $("#activityButtons").append(addButton);
+                        }
+                    }
+                    else{
+                        for (var i = 0; i < 3; i++){
+                            restAddress[i] = response.searchResults[i].fields.address;
+                            restCity[i] = response.searchResults[i].fields.city;
+                            restName[i] = response.searchResults[i].fields.name;
+                            restPhone[i] = response.searchResults[i].fields.phone;
+                            restST[i] = response.searchResults[i].fields.state;
+                        }
+                        for (var i = 0; i < 3; i++){
+                            var newP = $("<p>");
+                            newP.text(restName[i] + " " + restAddress[i] + " " + restCity[i] + " " + restPhone[i]);
+                            $("#activityButtons").append(newP);
+                            var addButton = $("<div>");
+                            addButton.text("Add");
+                            addButton.attr({"name": restName[i], "contact": restPhone[i]});
+                            addButton.addClass("store");
+                            $("#activityButtons").append(addButton);
+                        }
+                    }
                 }
             });
     };
@@ -218,8 +245,9 @@ $(document).ready(function() {
         addButton.text("Add");
         addButton.attr({"name": info.data[i].name, "contact": info.data[i].regulationsUrl});
         addButton.addClass("store");
-        thisCampDiv.append(campButton, addButton);
+        thisCampDiv.append(campButton);
         $("#activityButtons").append(thisCampDiv);
+        $("#activityButtons").append(addButton);
     };
 
     //create buttons for campgrounds nearby
@@ -374,6 +402,9 @@ $(document).ready(function() {
         lng = null;
         tripArr = [];
         localStorage.setItem("array", JSON.stringify(tripArr));
+        displayActivities();
+    });
+    $("#oldInfo").on("click", function(){
         displayActivities();
     });
 });
