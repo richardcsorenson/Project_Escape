@@ -21,17 +21,8 @@
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="page-nav-collapse">
                 <ul class="nav navbar-nav ml-auto">
-                    <li>
-                    <a class="nav-link" href="contact.html">Current Trip Items</a>
-                    </li>
-                    <li>
-                    <a class="nav-link" href="portfolio.html">Previous Trip Log</a>
-                    </li>
-                    <li>
-                    <a class="nav-link" href="about.html">About Us</a>
-                    </li>
-                    <li>
-                        <a class="nav-link">Login</a>
+                    <li >
+                    <div id = "navStyle">Current Trip Items</div>
                     </li>
                 </ul>
             </div>
@@ -47,15 +38,20 @@
         <div class = "row">
             <div class = "col-md-8">
                 <div class = "row">
-                    <input type="text" value="Enter a city (City, ST)" class = "searchingCity">
-                   <button id = "going">Go</button>
+                    <input type="text" placeholder="Enter a city (City, ST)" class = "searchingCity">
+                   <!--<button id = "going">Go</button>-->
+                   <input type = "submit" id = "going" value = "Go">
                 </div>
+                <div id="myModal" class="modal">
+                        <div class="modal-content">
+                            <h4 id="correction"></h4>
+                        </div>
+                    </div> 
                 <div class = "areaMap">
                 </div>
             </div>
             <div class = "col-md-4">
                 <div class="row">
-
                 </div>
                 
                 <div class = "row">
@@ -67,7 +63,7 @@
             </div>
         </div>
     </div>    
-
+    <div id = "footer">copyright@2018</div>
     <script src="assets/javascript/logic.js"></script>    
 </body>
-</html>
+</html>x
