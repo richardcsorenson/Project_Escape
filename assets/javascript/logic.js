@@ -5,7 +5,6 @@ $(document).ready(function() {
     var geocodeArray;
     var lat;
     var lng;
-    var tripActivities = 0;
     tripArr = [];
     
     $(document).on("click", "#npButton", function(){   
@@ -258,6 +257,7 @@ $(document).ready(function() {
         setTimeout(function(){ modal.css("display", "none"); }, 3000);
     };
 
+    //User can store the name and some contact information in local storage
     $(document).on('click', '.store', function() {
         var name = ($(this).attr("name"));
         var contact = ($(this).attr("contact"));
@@ -268,35 +268,33 @@ $(document).ready(function() {
         displayActivities();
     });
 
+    //Reads trip array from local storage and displays it so user can see it, also creates a delete button to remove item
     function displayActivities() {
         $("#currentTrip").empty();
         var data = JSON.parse(localStorage.getItem("array"));        
         for (var i= 0; i < data.length; i++) {
             var s = $("<div>");
-            s.attr("id", "item-" + tripActivities);
+            s.attr("id", "item-" + i);
             var item = data[i][0].toString() + " " + data[i][1].toString();
-            console.log(item);
             s.text(item);
             var remover = $("<button>");
             remover.addClass("delete");
-            remover.attr("data-num", tripActivities);
             remover.attr("value", i);
             remover.text("✘");
             s.prepend(remover);
             $('#currentTrip').append(s);
-            tripActivities++;
         }
     }
 
+    //When clicked, removes the activity from the trip array and visible list and also resets the stored array
     $(document).on("click", '.delete', function(){
-        var activityNumber = $(this).attr("data-num");
         var index = $(this).attr("value");
         tripArr.splice(index, 1);
-        $("#item-" + activityNumber).remove();
-        console.log(tripArr);
+        $("#item-" + index).remove();
         localStorage.setItem("array", JSON.stringify(tripArr));
         displayActivities();
     });
+
 
     $(document).on("click", '.hiking', function(){
         $("#campInfo").empty();
@@ -319,14 +317,16 @@ $(document).ready(function() {
             }).then(function(response){
 
                var mapData = response.trails;
-
-               for(i=0;i<mapData.length;i++){
-
-                   if(mapData[i].stars == 5){
-
+               var counter = 0;
+                if (mapData.length === 0) {
+                    var noHikes = $("<p>");
+                    noHikes.text("Sorry, there are no trails nearby.");
+                    $("#campInfo").append(noHikes);
+                }
+                else if (mapData.length < 5)  {
+                    for (var i = 0; i <mapData.length; i++){
                         var hikeInfo = $("<div>");
                         hikeInfo.text(mapData[i].name);
-
                         hikeInfo.attr({
                             "url":mapData[i].url,
                             "name":mapData[i].name,
@@ -334,12 +334,28 @@ $(document).ready(function() {
                             "length":mapData[i].length, 
                             "status":mapData[i].conditionStatus,
                             "ascent":mapData[i].ascent});
-
+                
                         hikeInfo.attr("id", "hikeBtn");
                         $("#campInfo").append(hikeInfo);
-                   }                     
-               }
-               console.log(response);
+                     }
+                }   
+                else {
+                    for (var i = 0; i < 5; i++) {
+                        var hikeInfo = $("<div>");
+                        hikeInfo.text(mapData[i].name);
+                        hikeInfo.attr({
+                            "url":mapData[i].url,
+                            "name":mapData[i].name,
+                            "location":mapData[i].location, 
+                            "length":mapData[i].length, 
+                            "status":mapData[i].conditionStatus,
+                            "ascent":mapData[i].ascent});
+                
+                        hikeInfo.attr("id", "hikeBtn");
+                        $("#campInfo").append(hikeInfo);
+                    }
+                }
+                            
             });
         }
         mapInfo();
