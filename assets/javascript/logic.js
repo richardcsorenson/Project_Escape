@@ -9,9 +9,9 @@ $(document).ready(function() {
     //creates modal if user input doesn't match correct format
     function inputCorrection() {
         var modal = $('#myModal');
-        $("#correction").text("Please enter the city in the correct format.")
+        $("#correction").text("Please enter the City and State in the correct format.")
         modal.css("display", "block");
-        setTimeout(function(){ modal.css("display", "none"); }, 5000);
+        setTimeout(function(){ modal.css("display", "none"); }, 3000);
     };
     //function to start the search and create 3 buttons relating to the 3 closest national parks
     $("#going").on("click", function(){
@@ -187,22 +187,51 @@ $(document).ready(function() {
             }).then(function(response) {
                 $("#activityButtons").empty();
                 var restAddress = [], restCity = [], restST = [], restPhone = [], restName = [];
-                for (var i = 0; i < 3; i++){
-                    restAddress[i] = response.searchResults[i].fields.address;
-                    restCity[i] = response.searchResults[i].fields.city;
-                    restName[i] = response.searchResults[i].fields.name;
-                    restPhone[i] = response.searchResults[i].fields.phone;
-                    restST[i] = response.searchResults[i].fields.state;
+                if(response.resultsCount == 0){
+                    $("#activityButtons").text("Sorry, there are no resturants within a 20 mile radius");
                 }
-                for (var i = 0; i < 3; i++){
-                    var newP = $("<p>");
-                    newP.text(restName[i] + " " + restAddress[i] + " " + restCity[i] + " " + restPhone[i]);
-                    $("#activityButtons").append(newP);
-                    var addButton = $("<button>");
-                    addButton.text("Add");
-                    addButton.attr({"name": restName[i], "contact": restPhone[i]});
-                    addButton.addClass("store");
-                    $("#activityButtons").append(addButton);
+                else{
+                    var restAddress = [], restCity = [], restST = [], restPhone = [], restName = [];
+                    if(response.resultsCount < 5){
+                        for (var i = 0; i < response.resultsCount; i++){
+                            restAddress[i] = response.searchResults[i].fields.address;
+                            restCity[i] = response.searchResults[i].fields.city;
+                            restName[i] = response.searchResults[i].fields.name;
+                            restPhone[i] = response.searchResults[i].fields.phone;
+                            restST[i] = response.searchResults[i].fields.state;
+                        }
+                        for (var i = 0; i < response.resultsCount; i++){
+                            var newP = $("<p>");
+                            newP.text(restName[i] + " " + restAddress[i] + " " + restCity[i] + " " + restPhone[i]);
+                            newP.addClass("specialP");
+                            $("#activityButtons").append(newP);
+                            var addButton = $("<div>");
+                            addButton.text("Add");
+                            addButton.attr({"name": restName[i], "contact": restPhone[i]});
+                            addButton.addClass("store");
+                            addButton.addClass("specialButton");
+                            $("#activityButtons").append(addButton);
+                        }
+                    }
+                    else{
+                        for (var i = 0; i < 5; i++){
+                            restAddress[i] = response.searchResults[i].fields.address;
+                            restCity[i] = response.searchResults[i].fields.city;
+                            restName[i] = response.searchResults[i].fields.name;
+                            restPhone[i] = response.searchResults[i].fields.phone;
+                            restST[i] = response.searchResults[i].fields.state;
+                        }
+                        for (var i = 0; i < 3; i++){
+                            var newP = $("<p>");
+                            newP.text(restName[i] + " " + restAddress[i] + " " + restCity[i] + " " + restPhone[i]);
+                            $("#activityButtons").append(newP);
+                            var addButton = $("<div>");
+                            addButton.text("Add");
+                            addButton.attr({"name": restName[i], "contact": restPhone[i]});
+                            addButton.addClass("store");
+                            $("#activityButtons").append(addButton);
+                        }
+                    }
                 }
             });
     };
@@ -218,8 +247,9 @@ $(document).ready(function() {
         addButton.text("Add");
         addButton.attr({"name": info.data[i].name, "contact": info.data[i].regulationsUrl});
         addButton.addClass("store");
-        thisCampDiv.append(campButton, addButton);
+        thisCampDiv.append(campButton);
         $("#activityButtons").append(thisCampDiv);
+        $("#activityButtons").append(addButton);
     };
 
     //create buttons for campgrounds nearby
@@ -332,30 +362,25 @@ $(document).ready(function() {
 
     function displayActivities() {
         $("#currentTrip").empty();
-        var data = JSON.parse(localStorage.getItem("array"));
-        var tripActivities = 1;        
+        var data = JSON.parse(localStorage.getItem("array"));        
         for (var i= 0; i < data.length; i++) {
             var s = $("<div>");
-            s.attr("id", "item-" + tripActivities);
+            s.attr("id", "item-" + i);
             var item = data[i][0].toString() + " " + data[i][1].toString();
-            console.log(item);
             s.text(item);
             var remover = $("<button>");
             remover.addClass("delete");
-            remover.attr("data-num", tripActivities);
             remover.attr("value", i);
             remover.text("✘");
             s.prepend(remover);
             $('#currentTrip').append(s);
-            tripActivities++;
         }
     }
     //remove items from the user generated list
     $(document).on("click", '.delete', function(){
-        var activityNumber = $(this).attr("data-num");
         var index = $(this).attr("value");
         tripArr.splice(index, 1);
-        $("#item-" + activityNumber).remove();
+        $("#item-" + index).remove();
         console.log(tripArr);
         localStorage.setItem("array", JSON.stringify(tripArr));
         displayActivities();
@@ -375,5 +400,9 @@ $(document).ready(function() {
         tripArr = [];
         localStorage.setItem("array", JSON.stringify(tripArr));
         displayActivities();
+    });
+    $("#oldInfo").on("click", function(){
+        displayActivities();
+        tripArr = JSON.parse(localStorage.getItem("array"));
     });
 });

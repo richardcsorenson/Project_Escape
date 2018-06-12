@@ -32,9 +32,6 @@ body{
     
 }
 
-.activityInfo{
-    margin: -.6rem;
-}
 #buttonBox{
     width:90%;
     margin: 70px auto 10px 0px;
@@ -102,9 +99,20 @@ input{
     background-color: rgba(62, 92, 33, 0.466);
     box-shadow: 2px 2px 2px gray;
 }
+#reset{
+    border:none;
+    background-color:white;
+}
+
+#reset:hover{
+    color:white;
+    cursor: pointer;
+    background-color: rgba(62, 92, 33, 0.466);
+    box-shadow: 2px 2px 2px gray;
+}
 
 .areaMap{
-    margin-bottom:100px;
+    margin-bottom:auto;
 
 }
 
@@ -154,6 +162,7 @@ input{
     text-align: center;
     line-height: 50px;
     font-size:12px;
+    margin-top: 50px;
 }
 
 #hikeBtn{
@@ -185,4 +194,31 @@ input{
 
 #currentTrip{
     margin-top:20px;
+    margin-bottom: 50px
+}
+
+.campingSite{
+    background-color:white;
+    margin:10px 0px 0px 0px;
+    box-shadow: 2px 2px 2px gray;
+    padding:5px;
+    border:none;
+    -webkit-background-color:white;
+    -webkit-margin:10px 0px 0px 0px;
+    -webkit-box-shadow: 2px 2px 2px gray;
+    -webkit-padding:5px;
+    -webkit-border:none;
+}
+.campingSite:hover{
+    color:white;
+    cursor: pointer;
+    background-color: rgba(62, 92, 33, 0.466);
+    -webkit-color:white;
+    -webkit-cursor: pointer;
+    -webkit-background-color: rgba(62, 92, 33, 0.466);
+}
+.specialButton{
+    max-width: 20%;
+    max-width: 9%;
+    padding-left: 2px;
 }
